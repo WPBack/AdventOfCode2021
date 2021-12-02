@@ -31,7 +31,21 @@ def puzzle2(filename):
     inputFile = open(os.path.join(__location__, filename), 'r') 
     input = inputFile.readlines()
 
-    return 0
+    pos = 0
+    depth = 0
+    aim = 0
+    for line in input:
+        dir = line[:-3]
+        steps = int(line[-2])
+        if dir == 'forward':
+            pos += steps
+            depth += aim*steps
+        elif dir == 'down':
+            aim += steps
+        elif dir== 'up':
+            aim -= steps
+
+    return pos*depth
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 150
@@ -45,7 +59,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 900
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
