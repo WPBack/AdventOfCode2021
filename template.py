@@ -41,4 +41,4 @@ else:
 
 # Solve puzzle 2 if test passed
 if(puzzle2TestPass):
-    print('Solution for puzzle 2: ' + str(puzzle1('input')))
+    print('Solution for puzzle 2: ' + str(puzzle2('input')))
