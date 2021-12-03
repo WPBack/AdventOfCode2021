@@ -1,6 +1,7 @@
 # Import modules
 import os
 from termcolor import colored
+import numpy as np
 
 # Input parser
 def input_parser(filename):
@@ -9,7 +10,7 @@ def input_parser(filename):
     inputFile = open(os.path.join(__location__, filename), 'r')
 
     # Process the file
-    input = inputFile.readlines()
+    input = [[b == '1' for b in line[:-1]] for line in inputFile.readlines()]
 
     # Close the file and return the result
     inputFile.close()
@@ -20,7 +21,14 @@ def puzzle1(filename):
     # Read file
     input = input_parser(filename)
 
-    return 0
+    # Calculate gamma and epsilon
+    numTrue = np.sum(input, axis=0)
+    gammaBin = [num > len(input)/2 for num in numTrue]
+    epsilonBin = np.invert(gammaBin)
+    gamma = int(''.join(['1' if b else '0' for b in gammaBin]), 2)
+    epsilon = int(''.join(['1' if b else '0' for b in epsilonBin]), 2)
+
+    return gamma*epsilon
 
 # Puzzle 2
 def puzzle2(filename):
@@ -30,7 +38,7 @@ def puzzle2(filename):
     return 0
 
 # Run tests for puzzle 1
-puzzle1TestPass = puzzle1('example1') == 1
+puzzle1TestPass = puzzle1('example1') == 198
 if(puzzle1TestPass):
     print(colored('Tests for puzzle 1 PASS', 'green'))
 else:
