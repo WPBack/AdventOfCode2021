@@ -64,7 +64,6 @@ def input_parser(filename):
 def puzzle1(filename):
     # Read file
     (draws, bingoBoards) = input_parser(filename)
-    result = 0
     for draw in draws:
         for board in bingoBoards:
             bingo = board.checkDraw(draw)
@@ -77,8 +76,19 @@ def puzzle1(filename):
 # Puzzle 2
 def puzzle2(filename):
     # Read file
-    input = input_parser(filename)
+    (draws, bingoBoards) = input_parser(filename)
+    numBoards = len(bingoBoards)
+    numBingos = 0
+    for draw in draws:
+        for board in list(bingoBoards):
+            bingo = board.checkDraw(draw)
+            if bingo:
+                numBingos += 1
+                if numBingos == numBoards:
+                    return board.getSumOfUnmarked()*draw
+                bingoBoards.remove(board)
 
+    print('Did not bingo on all boards')
     return 0
 
 # Run tests for puzzle 1
@@ -93,7 +103,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 1924
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
