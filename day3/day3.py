@@ -35,7 +35,28 @@ def puzzle2(filename):
     # Read file
     input = input_parser(filename)
 
-    return 0
+    # Calculate oxygen and co2
+    possibleOxygen = input.copy()
+    possibleCo2 = input.copy()
+    oxygenFound = False
+    co2Found = False
+    i = 0
+    while not oxygenFound:
+        mostCommon = np.sum(possibleOxygen, axis=0)[i] >= len(possibleOxygen)/2
+        possibleOxygen = [num for num in possibleOxygen if num[i] == mostCommon]
+        oxygenFound = len(possibleOxygen) == 1
+        i += 1
+    i = 0
+    while not co2Found:
+        mostCommon = np.sum(possibleCo2, axis=0)[i] >= len(possibleCo2)/2
+        possibleCo2 = [num for num in possibleCo2 if num[i] != mostCommon]
+        co2Found = len(possibleCo2) == 1
+        i += 1
+
+    oxygen = int(''.join(['1' if b else '0' for b in possibleOxygen[0]]), 2)
+    co2 = int(''.join(['1' if b else '0' for b in possibleCo2[0]]), 2)
+
+    return oxygen*co2
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 198
@@ -49,7 +70,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 230
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
