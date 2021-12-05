@@ -17,11 +17,18 @@ class Line:
     def isVertical(self):
         return self.x1 == self.x2
 
-    def getPointsOnLine(self):
+    def getPointsOnLine(self, considerDiagonal):
         if self.isHorizontal():
             return [(x, self.y1) for x in range(min(self.x1, self.x2), max(self.x1, self.x2)+1)]
         elif self.isVertical():
             return [(self.x1, y) for y in range(min(self.y1, self.y2), max(self.y1, self.y2)+1)]
+        elif considerDiagonal:
+            x = list(range(min(self.x1, self.x2), max(self.x1, self.x2)+1))
+            y = list(range(min(self.y1, self.y2), max(self.y1, self.y2)+1))
+            if (self.x2 > self.x1) != (self.y2 > self.y1):
+                y.reverse()
+            return list(zip(x, y))
+
         else:
             return []
 
@@ -48,7 +55,7 @@ def puzzle1(filename):
     diagramNCols = max(max([line.x1 for line in lines]), max([line.x2 for line in lines]))+1
     diagram = [[0]*diagramNCols for i in range(diagramNRows)]
     for line in lines:
-        for point in line.getPointsOnLine():
+        for point in line.getPointsOnLine(False):
             diagram[point[1]][point[0]] += 1
 
     # Count the number of points with >=2 lines
@@ -65,7 +72,22 @@ def puzzle2(filename):
     # Read file
     lines = input_parser(filename)
 
-    return 0
+    # Fill in the diagram
+    diagramNRows = max(max([line.y1 for line in lines]), max([line.y2 for line in lines]))+1
+    diagramNCols = max(max([line.x1 for line in lines]), max([line.x2 for line in lines]))+1
+    diagram = [[0]*diagramNCols for i in range(diagramNRows)]
+    for line in lines:
+        for point in line.getPointsOnLine(True):
+            diagram[point[1]][point[0]] += 1
+
+    # Count the number of points with >=2 lines
+    numOverlapping = 0
+    for row in diagram:
+        for point in row:
+            if point >= 2:
+                numOverlapping += 1
+
+    return numOverlapping
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 5
@@ -79,7 +101,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 12
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
