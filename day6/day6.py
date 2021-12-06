@@ -36,9 +36,22 @@ def puzzle1(filename):
 # Puzzle 2
 def puzzle2(filename):
     # Read file
-    input = input_parser(filename)
+    fishes = input_parser(filename)
 
-    return 0
+    # Create a dictionary of how many fish have which timer
+    fishesDict = [0]*9
+    for i in range(9):
+        fishesDict[i] = fishes.count(i)
+
+    # Simulate over 256 days
+    for day in range(256):
+        numNewFish = fishesDict[0]
+        for i in range(8):
+            fishesDict[i] = fishesDict[i+1]
+        fishesDict[8] = numNewFish
+        fishesDict[6] += numNewFish
+
+    return sum(fishesDict)
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 5934
@@ -52,7 +65,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 26984457539
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
