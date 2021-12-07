@@ -30,7 +30,15 @@ def puzzle2(filename):
     # Read file
     input = input_parser(filename)
 
-    return 0
+    minCost = 9999999999999999 # Ugly I know
+
+    maxInput = max(input)
+
+    for i in range(maxInput):
+        minCost = min(minCost, sum([sum([x for x in range(abs(j - i)+1)]) for j in input]))
+        print(str(i/maxInput*100) + '%')
+
+    return minCost
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 37
@@ -44,7 +52,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 168
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
