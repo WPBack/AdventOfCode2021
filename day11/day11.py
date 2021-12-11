@@ -80,7 +80,29 @@ def puzzle2(filename):
     # Read file
     input = input_parser(filename)
 
-    return 0
+    # Simulate until all flashes
+    stepsToAllFlash = 0
+    nrFlashes = 0
+    while nrFlashes < len(input)*len(input[0]):
+        nrFlashes = 0
+        stepsToAllFlash += 1
+        flashMap = [[False]*len(input[0]) for _ in range(len(input))]
+
+        # Increase all by 1
+        for row in range(len(input)):
+            for col in range(len(input[0])):
+                input[row][col] += 1
+
+        # Check flashes
+        for row in range(len(input)):
+            for col in range(len(input[0])):
+                nrFlashes += checkFlash(input, flashMap, row, col)
+        
+        # 0 all that flashed
+        for row in range(len(input)):
+            input[row] = [0 if octopus > 9 else octopus for octopus in input[row]]
+
+    return stepsToAllFlash
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 1656
@@ -94,7 +116,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 195
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
