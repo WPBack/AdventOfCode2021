@@ -1,6 +1,7 @@
 # Import modules
 import os
 from termcolor import colored
+import statistics
 
 # Input parser
 def input_parser(filename):
@@ -57,7 +58,49 @@ def puzzle2(filename):
     # Read file
     input = input_parser(filename)
 
-    return 0
+    # Complete the incomplete lines and count score
+    scores = []
+    for lineNr in range(len(input)):
+        openChunks = []
+        corrupt = False
+
+        for bracket in input[lineNr]:
+            if not corrupt:
+                if bracket == '(' or bracket == '[' or bracket == '{' or bracket == '<':
+                    openChunks.append(bracket)
+                elif bracket == ')':
+                    lastOpen = openChunks.pop()
+                    if not lastOpen == '(':
+                        corrupt = True
+                elif bracket == ']':
+                    lastOpen = openChunks.pop()
+                    if not lastOpen == '[':
+                        corrupt = True
+                elif bracket == '}':
+                    lastOpen = openChunks.pop()
+                    if not lastOpen == '{':
+                        corrupt = True
+                elif bracket == '>':
+                    lastOpen = openChunks.pop()
+                    if not lastOpen == '<':
+                        corrupt = True
+        
+        if not corrupt:
+            score = 0
+            for openChunk in reversed(openChunks):
+                score *= 5
+                if openChunk == '(':
+                    score += 1
+                elif openChunk == '[':
+                    score += 2
+                elif openChunk == '{':
+                    score += 3
+                elif openChunk == '<':
+                    score += 4
+
+            scores.append(score)
+
+    return statistics.median(scores)
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 26397
@@ -71,7 +114,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 288957
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
