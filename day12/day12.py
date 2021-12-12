@@ -50,6 +50,7 @@ def input_parser(filename):
     inputFile.close()
     return caves
 
+# Puzzle 1
 # Recursively count the number of paths
 def getNumPathsToEnd(start, path):
     if start.name == 'end':
@@ -65,7 +66,7 @@ def getNumPathsToEnd(start, path):
 
     return numPaths
 
-# Puzzle 1
+# Puzzle 1 solver
 def puzzle1(filename):
     # Read file
     caves = input_parser(filename)
@@ -75,11 +76,31 @@ def puzzle1(filename):
     return getNumPathsToEnd(caves[0], path.copy())
 
 # Puzzle 2
+# Recursively count the number of paths
+def getNumPathsToEndPuzzle2(start, path, smallVisitedTwice):
+    if start.name == 'end':
+        return 1
+    
+    if start.name == 'start' or (start.small and start in path and smallVisitedTwice):
+        return 0
+
+    smallVisitedTwiceNow = smallVisitedTwice or (start.small and start in path)
+
+    path.append(start)
+    numPaths = 0
+    for connection in start.connections:
+        numPaths += getNumPathsToEndPuzzle2(connection, path.copy(), smallVisitedTwiceNow)
+
+    return numPaths
+
+# Puzzle 2 solver
 def puzzle2(filename):
     # Read file
-    input = input_parser(filename)
+    caves = input_parser(filename)
 
-    return 0
+    # Count the number of ways to reach the end
+    path = []
+    return sum([getNumPathsToEndPuzzle2(start, path.copy(), False) for start in caves[0].connections])
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 10 and puzzle1('example2') == 19 and puzzle1('example3') == 226
@@ -93,7 +114,7 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2TestPass = puzzle2('example1') == 36 and puzzle2('example2') == 103 and puzzle2('example3') == 3509
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
