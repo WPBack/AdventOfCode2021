@@ -49,9 +49,36 @@ def puzzle1(filename):
 # Puzzle 2
 def puzzle2(filename):
     # Read file
-    input = input_parser(filename)
+    (sheet, foldsHorizontal) = input_parser(filename)
+    
+    # Fold the sheet
+    width = len(sheet[0])
+    height = len(sheet)
+    for fold in foldsHorizontal:
+        if fold:
+            prevHeight = height
+            height = int(height/2)
+            for y in range(height):
+                for x in range(width):
+                    sheet[y][x] = sheet[y][x] or sheet[prevHeight-1-y][x]
 
-    return 0
+        else:
+            prevWidth = width
+            width = int(width/2)
+            for x in range(width):
+                for y in range(height):
+                    sheet[y][x] = sheet[y][x] or sheet[y][prevWidth-1-x]
+
+    # Convert the sheet to a string that can be printed
+    result = ''
+    for y in range(height):
+        for x in range(width):
+            if sheet[y][x]:
+                result += '#'
+            else:
+                result += '.'
+        result += '\n'
+    return result[:-1]
 
 # Run tests for puzzle 1
 puzzle1TestPass = puzzle1('example1') == 17
@@ -65,7 +92,8 @@ if(puzzle1TestPass):
     print('Solution for puzzle 1: ' + str(puzzle1('input')))
 
 # Run tests for puzzle 2
-puzzle2TestPass = puzzle2('example1') == 2
+puzzle2sol = '#####\n#...#\n#...#\n#...#\n#####\n.....\n.....'
+puzzle2TestPass = puzzle2('example1') == puzzle2sol
 if(puzzle2TestPass):
     print(colored('Tests for puzzle 2 PASS', 'green'))
 else:
@@ -73,4 +101,4 @@ else:
 
 # Solve puzzle 2 if test passed
 if(puzzle2TestPass):
-    print('Solution for puzzle 2: ' + str(puzzle2('input')))
+    print('Solution for puzzle 2: \n' + str(puzzle2('input')))
